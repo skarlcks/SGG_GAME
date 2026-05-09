@@ -1,3 +1,4 @@
+cat << 'EOF'
 name: Build Android APK
 
 on:
@@ -24,18 +25,23 @@ jobs:
     
     - name: Install Cordova
       run: npm install -g cordova
-    
-    - name: Install dependencies
-      run: npm install
-    
-    - name: Add Android platform
-      run: cordova platform add android
-    
+
+    - name: Create Cordova project
+      run: |
+        cordova create sigungu com.kichan.sigungu 시군구마스터
+        cp index.html sigungu/www/index.html
+        cp config.xml sigungu/config.xml
+        cp package.json sigungu/package.json
+
     - name: Build APK
-      run: cordova build android --debug
+      run: |
+        cd sigungu
+        cordova platform add android
+        cordova build android --debug
     
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: sigungu-master-debug
-        path: platforms/android/app/build/outputs/apk/debug/app-debug.apk
+        path: sigungu/platforms/android/app/build/outputs/apk/debug/app-debug.apk
+EOF
