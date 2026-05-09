@@ -1,46 +1,37 @@
 name: Build Android APK
-
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    
     - name: Setup Java
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
-    
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '20'
-    
     - name: Install Cordova
       run: npm install -g cordova
-
     - name: Create Cordova project
       run: |
-        cordova create sigungu com.kichan.sigungu 시군구마스터
+        cordova create sigungu com.kichan.sigungu sigungu
         cp index.html sigungu/www/index.html
         cp config.xml sigungu/config.xml
         cp package.json sigungu/package.json
-
     - name: Build APK
       run: |
         cd sigungu
         cordova platform add android
         cordova build android --debug
-    
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: sigungu-master-debug
         path: sigungu/platforms/android/app/build/outputs/apk/debug/app-debug.apk
-EOF
